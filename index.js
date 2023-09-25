@@ -76,7 +76,7 @@ function promptUser(){
             break;
 
             default:
-                promptUser();
+                process.exit();
             break;
         }
     });
@@ -99,7 +99,18 @@ function viewAllTables(tableName, connection){
                 break;
 
                 case "role":
-                    console.table(results, ["id", "title", "salary", "department_id"]);
+                    connection.execute(
+                        `SELECT r.id, r.title, r.salary, d.name AS department FROM role r
+                        LEFT JOIN department d ON r.department_id = d.id`,
+                        function (err, roleResults) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                            console.table(roleResults, ["id", "title", "salary", "department"]);
+                            promptUser();
+                        }
+                    );
                 break;
 
                 case "employee":
