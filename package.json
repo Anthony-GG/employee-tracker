@@ -1,0 +1,22 @@
+{
+  "name": "employee-tracker",
+  "version": "1.0.0",
+  "description": "A program to aid in organizing and planning a business. Displays options that allow a user to view and manage deparments, roles and employees in a company.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Anthony-GG/employee-tracker.git"
+  },
+  "author": "Anthony-GG",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Anthony-GG/employee-tracker/issues"
+  },
+  "homepage": "https://github.com/Anthony-GG/employee-tracker#readme",
+  "dependencies": {
+    "inquirer": "^8.2.4"
+  }
+}
