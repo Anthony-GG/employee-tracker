@@ -99,8 +99,12 @@ function viewAllTables(tableName, connection){
                 break;
 
                 case "role":
+                    //SELECTs different required parts to display all the information correctly and renames them for a readable format
+                    //it CONCATs salary so it will include a dollar sign in the display without changing the data behind the scenes
+                    //it uses LEFT JOIN to successfully pull data from department to display the department name
                     connection.execute(
-                        `SELECT r.id, r.title, r.salary, d.name AS department FROM role r
+                        `SELECT r.id, r.title, CONCAT('$', r.salary) AS salary, d.name AS department
+                        FROM role r
                         LEFT JOIN department d ON r.department_id = d.id`,
                         function (err, roleResults) {
                             if (err) {
@@ -114,7 +118,27 @@ function viewAllTables(tableName, connection){
                 break;
 
                 case "employee":
-                    console.table(results, ["id", "first_name", "last_name", "role_id", "manager_id"]);
+                    //SELECTs different required parts to display all of the information correctly and renames them for a readable format
+                    //it CONCATs some names together so that instead of a first and last name, it just displays as one full name, as well as salary with a dollar sign
+                    // it uses LEFT JOIN to successfully pull the data from the other parts of the database
+                    connection.execute(
+                        `
+                        SELECT e.id AS employee_id, CONCAT(e.first_name, ' ', e.last_name) AS full_name,
+                               r.title AS role_title, d.name AS department, CONCAT('$', r.salary) AS salary,
+                               CONCAT(m.first_name, ' ', m.last_name) AS manager
+                        FROM employee e
+                        LEFT JOIN role r ON e.role_id = r.id
+                        LEFT JOIN department d ON r.department_id = d.id
+                        LEFT JOIN employee m ON e.manager_id = m.id`,
+                        function (err, employeeResults) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+                            console.table(employeeResults, ["employee_id", "full_name", "role_title", "department", "salary", "manager"]);
+                            promptUser();
+                        }
+                    );
                 break;
 
                 default:
