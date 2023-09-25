@@ -1,6 +1,9 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
+//added to control maxLengths of input
+const MaxLengthInputPrompt = require('inquirer-maxlength-input-prompt')
+
 
 let logo =`                                                                                       
 -----------------------------------------------------------------------------------------------------                                            
@@ -69,6 +72,10 @@ function promptUser(){
 
             case "view all employees":
                 viewAllTables("employee", connection)
+            break;
+
+            case "add a department":
+                addToTable('department', connection)
             break;
 
             case "exit":
@@ -153,4 +160,44 @@ function viewAllTables(tableName, connection){
             promptUser();
         }
     )
+}
+
+function addToTable(tableName, connection){
+
+    var name = "";
+    inquirer
+    .prompt([
+        {   
+            type: 'input',
+            message: `Please enter valid name for added ${tableName} (up to 16 characters): `,
+            name: 'addedName',
+            maxLength: 16,
+        }
+    ]).then((answers) =>{
+        name = answers.addedName;
+        switch(tableName){
+            case "department":
+                let randomID = generateRandomID();
+                connection.execute(
+                    `
+                    INSERT INTO ${tableName}(id, name) VALUES (${randomID}, '${name}')`,
+                    function (err, employeeResults) {
+                        if (err) {
+                            console.error(err);
+                            return;
+                        }
+                    }
+                );
+            break;
+        }
+        //Closes connection so mySQL2 doesn't throw a fit and the program continues
+        connection.end();
+
+        //Prompts the user again now that the requested information has delivered
+        promptUser();
+    });
+}
+
+function generateRandomID(){
+    return Math.floor(Math.random() * 10000 + 5000)
 }
