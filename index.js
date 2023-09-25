@@ -103,7 +103,7 @@ function viewAllTables(tableName, connection){
                     //it CONCATs salary so it will include a dollar sign in the display without changing the data behind the scenes
                     //it uses LEFT JOIN to successfully pull data from department to display the department name
                     connection.execute(
-                        `SELECT r.id, r.title, CONCAT('$', r.salary) AS salary, d.name AS department
+                        `SELECT r.id AS role_id, r.title, CONCAT('$', r.salary) AS salary, d.name AS department
                         FROM role r
                         LEFT JOIN department d ON r.department_id = d.id`,
                         function (err, roleResults) {
@@ -111,7 +111,7 @@ function viewAllTables(tableName, connection){
                                 console.error(err);
                                 return;
                             }
-                            console.table(roleResults, ["id", "title", "salary", "department"]);
+                            console.table(roleResults, ["role_id", "title", "salary", "department"]);
                             promptUser();
                         }
                     );
