@@ -58,17 +58,45 @@ function promptUser(){
         switch(choice){
 
             case "view all departments":
+                viewAllTables("department")
+            break;
 
+            case "view all roles":
+                viewAllTables("role")
+            break;
+
+            case "view all employees":
+                viewAllTables("employee")
             break;
 
             case "exit":
                 process.exit();
             break;
-            
+
             default:
                 promptUser();
-                break;
+            break;
         }
     });
-    promptUser();
+}
+
+function viewAllTables(tableName){
+    connection.query(
+        `SELECT * from ${tableName}`, function(err, results){
+            switch(tableName){
+                case "department":
+                    console.table(results, ["id", "name"]);
+                break;
+
+                case "role":
+                    console.table(results, ["id", "title", "salary", "department_id"]);
+                break;
+
+                case "employee":
+                    console.table(results, ["id", "first_name", "last_name", "role_id", "manager_id"]);
+                break;
+
+            }
+        }
+    )
 }
