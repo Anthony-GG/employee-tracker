@@ -1,13 +1,6 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
-// create the connection to database
-const connection = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'vinny123',
-  database: 'company_db'
-});
 
 let logo =`                                                                                       
 -----------------------------------------------------------------------------------------------------                                            
@@ -41,6 +34,15 @@ promptUser();
 //Parameters: Inputs from the user using arrow keys on a list
 //Returns: function, a decision to perform a function with aid from MYSQL
 function promptUser(){
+
+    // create the connection to database
+    const connection = mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: 'vinny123',
+        database: 'company_db'
+    });
+
     inquirer
     .prompt([
         /* Pass your questions in here */
@@ -58,15 +60,15 @@ function promptUser(){
         switch(choice){
 
             case "view all departments":
-                viewAllTables("department")
+                viewAllTables("department", connection)
             break;
 
             case "view all roles":
-                viewAllTables("role")
+                viewAllTables("role", connection)
             break;
 
             case "view all employees":
-                viewAllTables("employee")
+                viewAllTables("employee", connection)
             break;
 
             case "exit":
@@ -80,8 +82,16 @@ function promptUser(){
     });
 }
 
-function viewAllTables(tableName){
-    connection.query(
+
+
+//Purpose: to return all data from a MYSQL table using MYSQL2 in a readable table format in the console
+//Parameters: tableName, the name of the table it's retrieving the data from
+            //connection, the connection to the database using MYSQL2
+//Returns: a console.table function with data from the requested table
+function viewAllTables(tableName, connection){
+
+
+    connection.execute(
         `SELECT * from ${tableName}`, function(err, results){
             switch(tableName){
                 case "department":
@@ -96,7 +106,16 @@ function viewAllTables(tableName){
                     console.table(results, ["id", "first_name", "last_name", "role_id", "manager_id"]);
                 break;
 
+                default:
+                    console.table(results);
+                break;
             }
+
+            //Closes connection so mySQL2 doesn't throw a fit and the program continues
+            connection.end();
+
+            //Prompts the user again now that the requested information has delivered
+            promptUser();
         }
     )
 }
