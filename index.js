@@ -83,6 +83,10 @@ function promptUser(){
                 addToETable('employee', connection);
             break;
 
+            case "update an employee role":
+                updateEmployeeRole(connection);
+                break;
+
             case "exit":
                 console.clear();
                 process.exit();
@@ -361,7 +365,83 @@ function addToETable(tableName, connection) {
         });
 }
 
+//Purpose: updates an existing employee's role
+//Parameters: connection, passes the connection to the SQL table
+//Returns: N/A
+function updateEmployeeRole(connection) {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: 'Please enter the first name of the employee you want to update:',
+                name: 'firstName',
+            },
+            {
+                type: 'input',
+                message: 'Please enter the last name of the employee you want to update:',
+                name: 'lastName',
+            },
+            {
+                type: 'input',
+                message: 'Please enter the new role title for the employee:',
+                name: 'newRole',
+            },
+        ])
+        .then((answers) => {
 
+            //variable declarations
+            var firstName = answers.firstName;
+            var lastName = answers.lastName;
+            var newRole = answers.newRole;
+
+            //this retrieves the current value of the employee's role
+            connection.execute(
+                `SELECT e.id AS employee_id, r.id AS role_id
+                FROM employee e
+                LEFT JOIN role r ON e.role_id = r.id
+                WHERE e.first_name = '${firstName}' AND e.last_name = '${lastName}'`,
+                (err, results) => {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+
+                    const employeeId = results[0].employee_id;
+
+                    // this finds the id for the new role
+                    connection.execute(
+                        `SELECT id FROM role WHERE title = '${newRole}'`,
+                        (err, roleResults) => {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+
+                            const newRoleId = roleResults[0].id;
+
+                            // this takes the new role id and sets the employee's role
+                            connection.execute(
+                                `UPDATE employee SET role_id = ${newRoleId} WHERE id = ${employeeId}`,
+                                (err, updateResults) => {
+                                    if (err) {
+                                        console.error(err);
+                                    } 
+                                    
+                                    //Prompts the user again now that the requested information has delivered
+                                    promptUser();
+                                }
+                            );
+                        }
+                    );
+                }
+            );
+        });
+}
+
+
+//Purpose: gemerates a random ID integer that's greater than 5000
+//Parameters: N/A
+//Returns: number greater than 5000
 function generateRandomID(){
     return Math.floor(Math.random() * 10000 + 5000)
 }
