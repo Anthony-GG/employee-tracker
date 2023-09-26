@@ -75,10 +75,15 @@ function promptUser(){
             break;
 
             case "add a department":
-                addToTable('department', connection)
+                addToDTable('department', connection)
+            break;
+
+            case "add a role":
+                addToRTable('role', connection);
             break;
 
             case "exit":
+                console.clear();
                 process.exit();
             break;
 
@@ -162,7 +167,11 @@ function viewAllTables(tableName, connection){
     )
 }
 
-function addToTable(tableName, connection){
+
+//Purpose: adds data to the department table
+//Parameters: addedName, a prompt to the user for a name to add to the departments
+//Returns: N/A
+function addToDTable(tableName, connection){
 
     var name = "";
     inquirer
@@ -175,9 +184,9 @@ function addToTable(tableName, connection){
         }
     ]).then((answers) =>{
         name = answers.addedName;
+        let randomID = generateRandomID();
         switch(tableName){
             case "department":
-                let randomID = generateRandomID();
                 connection.execute(
                     `
                     INSERT INTO ${tableName}(id, name) VALUES (${randomID}, '${name}')`,
@@ -198,6 +207,77 @@ function addToTable(tableName, connection){
     });
 }
 
+//Purpose: adds data to the role table
+//Parameters: tableName, the name of the table, in this case 'role'
+//Returns: N/A
+function addToRTable(tableName, connection) {
+
+    //Variable initilizations
+    var name = "";
+    var salary = 0;
+    var departmentName = "";
+
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: `Please enter valid name for added ${tableName} (up to 16 characters): `,
+                name: 'addedName',
+                maxLength: 16,
+            },
+            {
+                type: 'input',
+                message: `Please enter valid salary for added ${tableName} (up to 12 characters): `,
+                name: 'addedSalary',
+                maxLength: 12,
+            },
+            {
+                type: 'input',
+                message: `Please enter valid department name for added ${tableName}: `,
+                name: 'addedDepartment',
+            }
+        ])
+        .then((answers) => {
+            name = answers.addedName;
+            salary = answers.addedSalary;
+            departmentName = answers.addedDepartment;
+
+            let randomID = generateRandomID();
+
+            connection.execute(
+                `
+                SELECT id FROM department WHERE name = '${departmentName}'
+                `,
+                function (err, queryResult) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    let departmentID = queryResult[0].id;
+                    connection.execute(
+                        `
+                        INSERT INTO ${tableName}(id, title, salary, department_id) VALUES (${randomID}, '${name}', ${salary}, ${departmentID})`,
+                        function (err, roleResults) {
+                            if (err) {
+                                console.error(err);
+                                return;
+                            }
+
+                            //Closes connection so mySQL2 doesn't throw a fit and the program continues
+                            connection.end();
+
+                            //Prompts the user again now that the requested information has delivered
+                            promptUser();
+                        }
+                    )
+                }
+            );
+        });
+}
+
+
 function generateRandomID(){
     return Math.floor(Math.random() * 10000 + 5000)
 }
+
+
