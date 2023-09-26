@@ -82,6 +82,10 @@ function promptUser(){
                 addToRTable('role', connection);
             break;
 
+            case "add an employee":
+                addToETable('employee', connection);
+            break;
+
             case "exit":
                 console.clear();
                 process.exit();
@@ -269,6 +273,97 @@ function addToRTable(tableName, connection) {
                             //Prompts the user again now that the requested information has delivered
                             promptUser();
                         }
+                    )
+                }
+            );
+        });
+}
+
+//Purpose: adds data to the employee table
+//Parameters: tableName, the name of the table, in this case 'employee'
+//Returns: N/A
+function addToETable(tableName, connection) {
+
+    //Variable initilizations
+    var firstName = "";
+    var lastName = "";
+    var role = "";
+    var manager = "";
+
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                message: `Please enter valid first name for added ${tableName} (up to 16 characters): `,
+                name: 'addedFirstName',
+                maxLength: 16,
+            },
+            {
+                type: 'input',
+                message: `Please enter valid last name for added ${tableName} (up to 16 characters): `,
+                name: 'addedLastName',
+                maxLength: 16,
+            },
+            {
+                type: 'input',
+                message: `Please enter valid role for added ${tableName} (up to 12 characters): `,
+                name: 'addedRole',
+                maxLength: 12,
+            },
+            {
+                type: 'input',
+                message: `Please enter valid manager name for added ${tableName}: `,
+                name: 'addedManager',
+            }
+        ])
+        .then((answers) => {
+            firstName = answers.addedFirstName;
+            lastName = answers.addedLastName;
+            roleName = answers.addedRole;
+            managerName = answers.addedManager;
+            managerNameArray = managerName.split(' ');
+
+            let randomID = generateRandomID();
+
+            connection.execute(
+                `
+                SELECT id FROM role WHERE title = '${roleName}'
+                `,
+                function (err, queryResult) {
+                    if (err) {
+                        console.error(err);
+                        return;
+                    }
+                    let roleID = queryResult[0].id;
+                    connection.execute(
+                        `
+                        SELECT id FROM employee WHERE (first_name = '${managerNameArray[0]}' AND last_name = '${managerNameArray[1]}')`,
+                    function (err, queryResult2) {
+                        if (err) {
+                            console.error(err);
+                            return;
+                        }
+
+                        console.log(queryResult2[0])
+                        let managerID = queryResult2[0].id;
+
+                        connection.execute(
+                            `
+                            INSERT INTO ${tableName}(id, first_name, last_name, role_id, manager_id) VALUES (${randomID}, '${firstName}','${lastName}', ${roleID}, ${managerID})`,
+                            function (err, roleResults) {
+                                if (err) {
+                                    console.error(err);
+                                    return;
+                                }
+
+                                //Closes connection so mySQL2 doesn't throw a fit and the program continues
+                                connection.end();
+
+                                //Prompts the user again now that the requested information has delivered
+                                promptUser();
+                            }
+                        )
+                    }
                     )
                 }
             );
