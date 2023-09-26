@@ -1,9 +1,6 @@
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 
-//added to control maxLengths of input
-const MaxLengthInputPrompt = require('inquirer-maxlength-input-prompt')
-
 
 let logo =`                                                                                       
 -----------------------------------------------------------------------------------------------------                                            
@@ -182,9 +179,8 @@ function addToDTable(tableName, connection){
     .prompt([
         {   
             type: 'input',
-            message: `Please enter valid name for added ${tableName} (up to 16 characters): `,
+            message: `Please enter valid name for added ${tableName}: `,
             name: 'addedName',
-            maxLength: 16,
         }
     ]).then((answers) =>{
         name = answers.addedName;
@@ -225,15 +221,13 @@ function addToRTable(tableName, connection) {
         .prompt([
             {
                 type: 'input',
-                message: `Please enter valid name for added ${tableName} (up to 16 characters): `,
+                message: `Please enter valid name for added ${tableName}: `,
                 name: 'addedName',
-                maxLength: 16,
             },
             {
                 type: 'input',
-                message: `Please enter valid salary for added ${tableName} (up to 12 characters): `,
+                message: `Please enter valid salary for added ${tableName}: `,
                 name: 'addedSalary',
-                maxLength: 12,
             },
             {
                 type: 'input',
@@ -294,21 +288,18 @@ function addToETable(tableName, connection) {
         .prompt([
             {
                 type: 'input',
-                message: `Please enter valid first name for added ${tableName} (up to 16 characters): `,
+                message: `Please enter valid first name for added ${tableName}: `,
                 name: 'addedFirstName',
-                maxLength: 16,
             },
             {
                 type: 'input',
-                message: `Please enter valid last name for added ${tableName} (up to 16 characters): `,
+                message: `Please enter valid last name for added ${tableName}: `,
                 name: 'addedLastName',
-                maxLength: 16,
             },
             {
                 type: 'input',
-                message: `Please enter valid role for added ${tableName} (up to 12 characters): `,
+                message: `Please enter valid role for added ${tableName}: `,
                 name: 'addedRole',
-                maxLength: 12,
             },
             {
                 type: 'input',

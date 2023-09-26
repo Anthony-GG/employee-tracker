@@ -18,7 +18,6 @@
   "homepage": "https://github.com/Anthony-GG/employee-tracker#readme",
   "dependencies": {
     "inquirer": "^8.2.4",
-    "inquirer-maxlength-input-prompt": "^1.0.2",
     "mysql2": "^3.6.1"
   }
 }
