@@ -270,12 +270,12 @@ function addToRTable(tableName, connection) {
                             //Closes connection so mySQL2 doesn't throw a fit and the program continues
                             connection.end();
 
-                            //Prompts the user again now that the requested information has delivered
-                            promptUser();
                         }
                     )
                 }
             );
+            //Prompts the user again now that the requested information has delivered
+            promptUser();
         });
 }
 
@@ -359,14 +359,14 @@ function addToETable(tableName, connection) {
                                 //Closes connection so mySQL2 doesn't throw a fit and the program continues
                                 connection.end();
 
-                                //Prompts the user again now that the requested information has delivered
-                                promptUser();
                             }
                         )
                     }
                     )
                 }
             );
+            //Prompts the user again now that the requested information has delivered
+            promptUser();
         });
 }
 
