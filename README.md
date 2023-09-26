@@ -31,7 +31,7 @@ Note: You may need to update the code at the very top of the page for your speci
 ## Video
 
 ### Here is a link to the video example showcasing the installation and usage of this project:
-[![Watch the video](https://img.youtube.com/vi/yvu42m7srhQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=yvu42m7srhQ)
+[![Watch the video](https://img.youtube.com/vi/Hnxx6B_A7Uc/maxresdefault.jpg)](https://www.youtube.com/watch?v=Hnxx6B_A7Uc)
 
 ## Mockup
 <div style="text-align:center">
